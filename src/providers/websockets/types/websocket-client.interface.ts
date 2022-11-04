@@ -1,7 +1,17 @@
 import { Socket } from 'socket.io';
 
-import { IUserWsContext } from './user-ws-context.interface';
-
 export interface IWebsocketClient extends Socket {
-  auth: IUserWsContext;
+  tiles: IWSMessage;
+}
+
+export interface IWSMessage {
+  leftTop: {
+    x: number;
+    y: number;
+  },
+  rightBottom: {
+    x: number;
+    y: number;
+  },
+  zoom: number;
 }

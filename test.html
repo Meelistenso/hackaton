@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.0/socket.io.js"></script>
+</head>
+<body>
+<script>
+  const userSocket = io('ws://localhost:3000/events', {
+    path: '/v1/websockets',
+    withCredentials: true,
+    transports: ['websocket'],
+  });
+  userSocket.on('connection', () => {
+    userSocket.emit('UPDATE_RIDE', {
+      tiles: {
+        leftTop: {
+          x: 11,
+          y: 12,
+        },
+        rightBottom: {
+          x: 13,
+          y: 14,
+        },
+        zoom: 6,
+      }
+    })
+  });
+  userSocket.on('error', (error) => {
+    console.error(error);
+  });
+  userSocket.on('UPDATE_RIDE', (data) => {
+    console.log(data);
+  });
+</script>
+</body>
+</html>

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 
-import { RedisModule } from '../../redis/redis.module';
 import { EventsWsGateway } from './events-ws.gateway';
+import { InMemoryStorageModule } from '../../inmemory-storage/in-memory-storage.module';
 
 @Module({
-  imports: [RedisModule],
+  imports: [InMemoryStorageModule],
   providers: [EventsWsGateway],
   exports: [EventsWsGateway],
 })
