@@ -3,15 +3,15 @@ import { PubSubService } from './providers/pubsub/pub-sub.service';
 import util from 'util';
 import { InMemoryStorageService } from './providers/inmemory-storage/in-memory-storage.service';
 import { RideStatus } from './providers/inmemory-storage/enums';
-import { BaseWsGateway } from './providers/websockets/base-ws-gateway';
 import { WsEventsNamesEnum } from './providers/websockets/enums';
+import { EventsWsGateway } from './providers/websockets/events-gateway/events-ws.gateway';
 
 @Injectable()
 export class AppService implements OnModuleInit {
   constructor(
     private readonly pubSubService: PubSubService,
     private readonly inMemoryStorage: InMemoryStorageService,
-    private readonly baseWsGateway: BaseWsGateway,
+    private readonly eventsWsGateway: EventsWsGateway,
   ) {
     pubSubService.subscribe(
       this.onMessage.bind(this),
@@ -37,7 +37,7 @@ export class AppService implements OnModuleInit {
     }
     const clients = this.inMemoryStorage.getAllConnections();
     clients.forEach((client) => {
-      this.baseWsGateway.clientEmit(client.id, WsEventsNamesEnum.UPDATE_RIDE, message);
+      this.eventsWsGateway.clientEmit(client.id, WsEventsNamesEnum.UPDATE_RIDE, message);
     });
   }
 

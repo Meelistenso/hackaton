@@ -6,12 +6,12 @@ export interface IWebsocketClient extends Socket {
 
 export interface IWSMessage {
   leftTop: {
-    lat: number;
-    lng: number;
+    x: number;
+    y: number;
   },
   rightBottom: {
-    lat: number;
-    lng: number;
+    x: number;
+    y: number;
   },
   zoom: number;
 }

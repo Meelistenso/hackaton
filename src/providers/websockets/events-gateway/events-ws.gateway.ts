@@ -25,6 +25,6 @@ export class EventsWsGateway extends BaseWsGateway {
 
   @SubscribeMessage(WsEventsNamesEnum.CHANGE_TILES)
   public changeTiles(@ConnectedSocket() client: IWebsocketClient): void {
-    this.inMemoryService.updateConnection(client.id, client.tiles);
+    this.inMemoryService.updateConnection(client.id, client.data.tiles);
   }
 }
