@@ -1,14 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { RideStatus } from './enums';
+import { IWebsocketClient } from '../websockets/types';
 
 @Injectable()
 export class InMemoryStorageService {
-  private readonly connections = new Map();
+  private readonly connections = new Map<string, IWebsocketClient>();
   private readonly rides = new Map();
 
   constructor() {}
 
-  public getConnection(socketId: string) {
+  public getAllConnections() {
+    return this.connections;
+  }
+
+  public getConnection(socketId: string): IWebsocketClient {
     return this.connections.get(socketId);
   }
 
@@ -17,7 +22,13 @@ export class InMemoryStorageService {
   }
 
   public updateConnection(socketId: string, data) {
-    this.connections.has(socketId) ? this.connections[socketId] = data : this.setConnection(socketId, data);
+    if (this.connections.has(socketId)) {
+      this.connections.get(socketId).tiles = data;
+    }
+  }
+
+  public removeConnection(socketId: string) {
+    this.connections.delete(socketId)
   }
 
   public getRide(rideId: string) {
