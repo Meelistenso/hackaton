@@ -5,6 +5,8 @@ import { InMemoryStorageService } from './providers/inmemory-storage/in-memory-s
 import { RideStatus } from './providers/inmemory-storage/enums';
 import { WsEventsNamesEnum } from './providers/websockets/enums';
 import { EventsWsGateway } from './providers/websockets/events-gateway/events-ws.gateway';
+import { tile2latLong } from './utils/tiles';
+import { dirAngle } from './utils/vector';
 
 @Injectable()
 export class AppService implements OnModuleInit {
@@ -36,9 +38,11 @@ export class AppService implements OnModuleInit {
         this.inMemoryStorage.addMoveToRide(ride_id, move, ride_status);
     }
     const clients = this.inMemoryStorage.getAllConnections();
-    clients.forEach((client) => {
-      this.eventsWsGateway.clientEmit(client.id, WsEventsNamesEnum.UPDATE_RIDE, message);
-    });
+    if (clients) {
+      clients.forEach((client) => {
+        this.eventsWsGateway.clientEmit(client.id, WsEventsNamesEnum.UPDATE_RIDE, message);
+      });
+    }
   }
 
   onModuleInit() {
