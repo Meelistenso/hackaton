@@ -25,20 +25,29 @@ export class InMemoryStorageService {
   }
 
   public setRide(rideId: string, move, status: RideStatus) {
-    this.rides.set(rideId, { moves: { ...move, timestamp: Date.now(), status: status || RideStatus.IN_PROCESS, } });
+    this.rides.set(rideId, {
+      moves: [{
+      ...move, timestamp: Date.now()
+      }],
+      status: status || RideStatus.ENROUTE,
+    });
   }
 
   public addMoveToRide(rideId: string, move, status?: RideStatus) {
-    this.rides.has(rideId) ? this.rides[rideId].moves.push({
-      ...move,
-      timestamp: Date.now(),
-    }) : this.setRide(rideId, move, status);
+    if (this.rides.has(rideId)) {
+      this.rides.get(rideId).moves.push({
+        ...move,
+        timestamp: Date.now(),
+      });
+    } else {
+      this.setRide(rideId, move, status);
+    }
   }
 
   public finishRide(rideId: string) {
     if (this.rides.has(rideId)) {
-      this.rides[rideId].moves = [];
-      this.rides[rideId].status = RideStatus.FINISHED;
+      this.rides.get(rideId).moves = [];
+      this.rides.get(rideId).status = RideStatus.DROPOFF;
     }
   }
 }
