@@ -5,6 +5,8 @@ import { InMemoryStorageService } from './providers/inmemory-storage/in-memory-s
 import { RideStatus } from './providers/inmemory-storage/enums';
 import { WsEventsNamesEnum } from './providers/websockets/enums';
 import { EventsWsGateway } from './providers/websockets/events-gateway/events-ws.gateway';
+import { tile2latLong } from './utils/tiles';
+import { dirAngle } from './utils/vector';
 
 @Injectable()
 export class AppService implements OnModuleInit {
@@ -36,9 +38,28 @@ export class AppService implements OnModuleInit {
         this.inMemoryStorage.addMoveToRide(ride_id, move, ride_status);
     }
     const clients = this.inMemoryStorage.getAllConnections();
-    clients.forEach((client) => {
-      this.eventsWsGateway.clientEmit(client.id, WsEventsNamesEnum.UPDATE_RIDE, message);
-    });
+    if (clients) {
+      clients.forEach((client) => {
+        //console.log(client.tiles);
+        const clientTopLeftTileCoords = tile2latLong(client.tiles.leftTop.x, client.tiles.leftTop.x, client.tiles.zoom)
+        const clientBottomRightTileCoords = tile2latLong(client.tiles.rightBottom.x, client.tiles.rightBottom.x, client.tiles.zoom)
+        if (
+          message.latitude > clientTopLeftTileCoords.lat &&
+          message.latitude < clientBottomRightTileCoords.lat &&
+          message.longitude > clientTopLeftTileCoords.long &&
+          message.longitude < clientBottomRightTileCoords.long
+        ) {
+          const ride = this.inMemoryStorage.getRide(ride_id);
+          this.eventsWsGateway.clientEmit(client.id, WsEventsNamesEnum.UPDATE_RIDE, {
+            ...message,
+            direction: ride.length >= 2 ? dirAngle(
+              { lat: ride[ride.length - 2].latitude, long: ride[ride.length - 2].longitude },
+              { lat: ride[ride.length - 1].latitude, long: ride[ride.length - 1].longitude }
+            ) : 0,
+          });
+        }
+      });
+    }
   }
 
   onModuleInit() {

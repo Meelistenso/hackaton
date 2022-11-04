@@ -13,15 +13,15 @@
     transports: ['websocket'],
   });
   userSocket.on('connection', () => {
-    userSocket.emit('UPDATE_RIDE', {
+    userSocket.emit('CHANGE_TILES', {
       tiles: {
         leftTop: {
-          x: 11,
+          x: 113,
           y: 12,
         },
         rightBottom: {
-          x: 13,
-          y: 14,
+          x: 136,
+          y: 144,
         },
         zoom: 6,
       }
