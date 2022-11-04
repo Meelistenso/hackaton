@@ -40,24 +40,7 @@ export class AppService implements OnModuleInit {
     const clients = this.inMemoryStorage.getAllConnections();
     if (clients) {
       clients.forEach((client) => {
-        //console.log(client.tiles);
-        const clientTopLeftTileCoords = tile2latLong(client.tiles.leftTop.x, client.tiles.leftTop.x, client.tiles.zoom)
-        const clientBottomRightTileCoords = tile2latLong(client.tiles.rightBottom.x, client.tiles.rightBottom.x, client.tiles.zoom)
-        if (
-          message.latitude > clientTopLeftTileCoords.lat &&
-          message.latitude < clientBottomRightTileCoords.lat &&
-          message.longitude > clientTopLeftTileCoords.long &&
-          message.longitude < clientBottomRightTileCoords.long
-        ) {
-          const ride = this.inMemoryStorage.getRide(ride_id);
-          this.eventsWsGateway.clientEmit(client.id, WsEventsNamesEnum.UPDATE_RIDE, {
-            ...message,
-            direction: ride.length >= 2 ? dirAngle(
-              { lat: ride[ride.length - 2].latitude, long: ride[ride.length - 2].longitude },
-              { lat: ride[ride.length - 1].latitude, long: ride[ride.length - 1].longitude }
-            ) : 0,
-          });
-        }
+        this.eventsWsGateway.clientEmit(client.id, WsEventsNamesEnum.UPDATE_RIDE, message);
       });
     }
   }
