@@ -28,7 +28,7 @@ export class InMemoryStorageService {
   }
 
   public removeConnection(socketId: string) {
-    this.connections.delete(socketId)
+    this.connections.delete(socketId);
   }
 
   public getRide(rideId: string) {

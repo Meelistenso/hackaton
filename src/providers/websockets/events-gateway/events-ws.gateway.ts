@@ -1,5 +1,5 @@
 import { UseFilters } from '@nestjs/common';
-import { ConnectedSocket, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 
 import { BaseWsGateway } from '../base-ws-gateway';
 import { WsEventsNamesEnum } from '../enums';
@@ -25,14 +25,19 @@ export class EventsWsGateway extends BaseWsGateway {
   }
 
   @SubscribeMessage(WsEventsNamesEnum.CHANGE_TILES)
-  public changeTiles(@ConnectedSocket() client: IWebsocketClient): void {
-    console.log(client);
-    this.inMemoryService.updateConnection(client.id, { ...client, tiles: client.data.tiles });
+  public changeTiles(
+    @MessageBody() body,
+    @ConnectedSocket() client: IWebsocketClient
+  ): void {
+    this.inMemoryService.updateConnection(client.id, body);
   }
 
   @SubscribeMessage(WsEventsNamesEnum.GET_RIDE)
-  public getRide(@ConnectedSocket() client: IWebsocketClient): void {
-    const ride = this.inMemoryService.getRide(client.data.rideId);
+  public getRide(
+    @MessageBody() body,
+    @ConnectedSocket() client: IWebsocketClient
+  ): void {
+    const ride = this.inMemoryService.getRide(body.rideId);
     return {
       ...ride,
       direction: ride.length >= 2 ? dirAngle(
