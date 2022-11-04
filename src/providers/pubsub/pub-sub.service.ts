@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import crypto from 'crypto';
-import util from 'util';
+import * as crypto from 'crypto';
+import * as util from 'util';
 import { PubSub } from '@google-cloud/pubsub';
 
 /** Maximum number of messages to queue locally un-acked */
@@ -56,7 +56,7 @@ export class PubSubService {
       if (!err) {
         this.SUB = sub;
         this.SUB.on('message', (message) => {
-          onMessage(message);
+          onMessage(JSON.parse(message.data.toString()));
           message.ack();
         });
         this.SUB.on('error', onError);
