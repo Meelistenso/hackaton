@@ -29,7 +29,7 @@ export class EventsWsGateway extends BaseWsGateway {
     @MessageBody() body,
     @ConnectedSocket() client: IWebsocketClient
   ): void {
-    this.inMemoryService.updateConnection(client.id, body);
+    this.inMemoryService.updateConnection(client.id, { id: client.id, ...body });
   }
 
   @SubscribeMessage(WsEventsNamesEnum.GET_RIDE)

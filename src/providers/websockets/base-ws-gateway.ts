@@ -20,7 +20,7 @@ export class BaseWsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
   public afterInit(): void {}
 
   public async handleConnection(client: IWebsocketClient): Promise<void> {
-    await this.inMemoryStorage.setConnection(client.id, client);
+    await this.inMemoryStorage.setConnection(client.id, { id: client.id });
   }
 
   public async handleDisconnect(client: IWebsocketClient): Promise<void> {
